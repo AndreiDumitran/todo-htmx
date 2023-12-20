@@ -5,6 +5,7 @@
           class="border-2 border-indigo-800 p-4 rounded-lg w-1/2 uppercase font-bold transition-all hover:bg-purple-500 mr-2 hover:scale-105 text-center cursor-pointer {{#ifEqual @root.filter this.name}} bg-purple-500 {{/ifEqual}}"
         href="/?filter={{this.name}}"
         hx-boost="true"
+        hx-swap="transition:true"
         >{{this.name}}({{this.count}})</a>
     {{/each}}
   </div>

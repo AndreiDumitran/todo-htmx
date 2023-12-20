@@ -21,7 +21,7 @@
       title="Edit Todo"
       hx-get="/todos/{{this.id}}/edit?filter={{#if this.filter}}{{this.filter}}{{else}}all{{/if}}"
       hx-target="#todo-{{this.id}}"
-      hx-swap="outerHTML"
+      hx-swap="outerHTML transition:true"
     />
     <img
       src="assets/trash.svg"
@@ -30,7 +30,7 @@
       hx-delete="/todos/{{this.id}}"
       hx-confirm="Are you sure?"
       hx-target="#todo-{{this.id}}"
-      hx-swap="delete"
+      hx-swap="delete transition:true"
       hx-select-oob="#filterBtns"
       title="Delete Todo"
     />

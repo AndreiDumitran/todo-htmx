@@ -1,4 +1,4 @@
-<form hx-post="/todos" hx-target="body" hx-swap="innerHTML">
+<form hx-post="/todos" hx-target="body" hx-swap="innerHTML transition:true">
   <input type="hidden" name="filter" value="{{this.filter}}" />
   <input
     type="text"
@@ -17,6 +17,7 @@
   <div
     id="loadingIndicator"
     class="flex items-center my-indicator justify-center my-8"
+    hx-swap="transition:true"
   >
     <img
       src="assets/bars.svg"
