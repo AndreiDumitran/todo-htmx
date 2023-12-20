@@ -1,0 +1,16 @@
+<div class="flex items-center mb-4 justify-between">
+  <div class="flex">
+    <input
+      type="checkbox"
+      name="completed"
+      class="h-6 w-6 mr-4"
+      hx-patch="/todos/{{this.id}}"
+      hx-target="body"
+      hx-swap="innerHTML"
+    />
+    <div class="">
+      {{this.name}}
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,4 @@
+{
+  "ext": "hbs, js, css",
+  "ignore": "**/db.json"
+}

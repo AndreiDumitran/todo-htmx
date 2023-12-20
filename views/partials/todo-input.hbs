@@ -1,0 +1,19 @@
+<form hx-post="/todos" hx-target="body" hx-swap="innerHTML">
+  <input
+    type="text"
+    minlength="5"
+    name="todo"
+    placeholder="Enter todos"
+    class="block w-full rounded-lg p-4 mt-10 text-black text-2xl"
+    required
+    autofocus
+  />
+  <button
+    type="submit"
+    class="block w-full rounded-lg text-xl mt-4 bg-amber-500 uppercase p-2 font-bold hover:bg-amber-600 transition-all hover:translate-y-1 hover:shadow-lg"
+    hx-disabled-elt="this"
+  >Add Todo</button>
+  <div id="loadingIndicator" class="flex items-center my-indicator justify-center my-8">
+    <img src="assets/bars.svg" alt="loading indicator" class="h-12 w-12 mx-auto">
+  </div>
+</form>
