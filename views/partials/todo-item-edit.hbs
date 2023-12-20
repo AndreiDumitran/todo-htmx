@@ -21,7 +21,7 @@
     <button
       type="submit"
       class="border-2 text-sm border-pink-500 p-2 rounded-md uppercase font-bold transition-all hover:bg-red-400 mr-2 hover:scale-105 w-1/4"
-      hx-get="/todos/{{this.id}}"
+      hx-get="/todos/{{this.id}}?filter={{this.filter}}"
       hx-target="#todo-edit-{{this.id}}"
       hx-swap="outerHTML"
     >Cancel</button>

@@ -48,6 +48,10 @@ const filterBtns = handlebars.compile(
   readFileSync(`${__dirname}/views/partials/filter-btns.hbs`, "utf8")
 );
 
+const noTodos = handlebars.compile(
+  readFileSync(`${__dirname}/views/partials/no-todo.hbs`, "utf8")
+);
+
 const FILTER_MAP = {
   all: () => true,
   active: (todo) => !todo.completed,
@@ -59,24 +63,31 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 app.get("/", (req, res) => {
   const { todos } = db.data;
   const filter = req.query.filter ?? "all";
+  const filteredTodos = todos.filter(FILTER_MAP[filter]);
   res.render("index", {
     partials: {
       todoInput,
       todoItem,
       filterBtns,
+      noTodos,
     },
-    todos,
-    filters: FILTER_NAMES,
+    todos: filteredTodos,
+    filters: FILTER_NAMES.map((name) => ({
+      name,
+      count: todos.filter(FILTER_MAP[name]).length,
+    })),
     filter,
+    noTodos: filteredTodos.length,
   });
 });
 
 app.post("/todos", async (req, res) => {
-  const { todo } = req.body;
+  const { todo, filter: filter = "All" } = req.body;
   const newTodo = { id: uuid(), name: todo, completed: false };
   db.data.todos.push(newTodo);
 
   const { todos } = db.data;
+  const filteredTodos = todos.filter(FILTER_MAP[filter]);
 
   await db.write();
 
@@ -86,8 +97,16 @@ app.post("/todos", async (req, res) => {
       partials: {
         todoInput,
         todoItem,
+        filterBtns,
+        noTodos,
       },
-      todos,
+      filters: FILTER_NAMES.map((name) => ({
+        name,
+        count: db.data.todos.filter(FILTER_MAP[name]).length,
+      })),
+      todos: filteredTodos,
+      filter,
+      noTodos: filteredTodos.length,
     });
   }, 1000);
 });
@@ -96,7 +115,9 @@ app.patch("/todos/:id", async (req, res) => {
   const { id } = req.params;
   const { todos } = db.data;
   const todo = todos.find((todo) => todo.id === id);
+  const filter = req.query.filter ?? "all";
   if (!todo) return res.sendStatus(404).send("Todo not found");
+  const filteredTodos = todos.filter(FILTER_MAP[filter]);
 
   todo.completed = !todo.completed;
   await db.write();
@@ -105,8 +126,16 @@ app.patch("/todos/:id", async (req, res) => {
     partials: {
       todoInput,
       todoItem,
+      filterBtns,
+      noTodos,
     },
-    todos,
+    todos: filteredTodos,
+    filters: FILTER_NAMES.map((name) => ({
+      name,
+      count: db.data.todos.filter(FILTER_MAP[name]).length,
+    })),
+    filter,
+    noTodos: filteredTodos.length,
   });
 });
 
@@ -118,17 +147,33 @@ app.delete("/todos/:id", async (req, res) => {
   const index = todos.indexOf(todo);
   todos.splice(index, 1);
   await db.write();
-  res.send("");
+
+  const filter = req.query.filter ?? "all";
+  return res.render("partials/filter-btns", {
+    layout: false,
+    partials: {
+      noTodos,
+    },
+    filters: FILTER_NAMES.map((name) => ({
+      name,
+      count: db.data.todos.filter(FILTER_MAP[name]).length,
+    })),
+    filter,
+    noTodos: db.data.todos.filter(FILTER_MAP[filter]).length,
+  });
 });
 
 app.get("/todos/:id/edit", (req, res) => {
   const { id } = req.params;
   const { todos } = db.data;
   const todo = todos.find((todo) => todo.id === id);
+  const filter = req.query.filter ?? "all";
   if (!todo) return res.sendStatus(404).send("Todo not found");
   res.render("partials/todo-item-edit", {
     layout: false,
     ...todo,
+    filter,
+    noTodos: filter.length,
   });
 });
 
@@ -136,10 +181,12 @@ app.get("/todos/:id", (req, res) => {
   const { id } = req.params;
   const { todos } = db.data;
   const todo = todos.find((todo) => todo.id === id);
+  const filter = req.query.filter ?? "all";
   if (!todo) return res.sendStatus(404).send("Todo not found");
   res.render("partials/todo-item", {
     layout: false,
     ...todo,
+    filter,
   });
 });
 

@@ -19,7 +19,7 @@
       alt="edit"
       class="h-6 w-6 cursor-pointer"
       title="Edit Todo"
-      hx-get="/todos/{{this.id}}/edit"
+      hx-get="/todos/{{this.id}}/edit?filter={{#if this.filter}}{{this.filter}}{{else}}all{{/if}}"
       hx-target="#todo-{{this.id}}"
       hx-swap="outerHTML"
     />
@@ -30,6 +30,8 @@
       hx-delete="/todos/{{this.id}}"
       hx-confirm="Are you sure?"
       hx-target="#todo-{{this.id}}"
+      hx-swap="delete"
+      hx-select-oob="#filterBtns"
       title="Delete Todo"
     />
   </div>
