@@ -105,7 +105,7 @@ app.delete("/todos/:id", async (req, res) => {
   res.send("");
 });
 
-app.get("/todos/:id/edit", async (req, res) => {
+app.get("/todos/:id/edit", (req, res) => {
   const { id } = req.params;
   const { todos } = db.data;
   const todo = todos.find((todo) => todo.id === id);
@@ -116,7 +116,7 @@ app.get("/todos/:id/edit", async (req, res) => {
   });
 });
 
-app.get("/todos/:id", async (req, res) => {
+app.get("/todos/:id", (req, res) => {
   const { id } = req.params;
   const { todos } = db.data;
   const todo = todos.find((todo) => todo.id === id);
