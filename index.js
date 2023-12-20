@@ -9,6 +9,10 @@ import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import { v4 as uuid } from "uuid";
 
+handlebars.registerHelper("ifEqual", function (a, b, options) {
+  return a === b ? options.fn(this) : options.inverse(this);
+});
+
 dotenv.config();
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const file = join(__dirname, "db.json");
@@ -40,18 +44,30 @@ const todoItem = handlebars.compile(
   readFileSync(`${__dirname}/views/partials/todo-item.hbs`, "utf8")
 );
 
-const todoItemEdit = handlebars.compile(
-  readFileSync(`${__dirname}/views/partials/todo-item-edit.hbs`, "utf8")
+const filterBtns = handlebars.compile(
+  readFileSync(`${__dirname}/views/partials/filter-btns.hbs`, "utf8")
 );
+
+const FILTER_MAP = {
+  all: () => true,
+  active: (todo) => !todo.completed,
+  completed: (todo) => todo.completed,
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 app.get("/", (req, res) => {
   const { todos } = db.data;
+  const filter = req.query.filter ?? "all";
   res.render("index", {
     partials: {
       todoInput,
       todoItem,
+      filterBtns,
     },
     todos,
+    filters: FILTER_NAMES,
+    filter,
   });
 });
 
